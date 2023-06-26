@@ -14,11 +14,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        // $posts = Post::all();
-        // return response()->json($posts);
         $results = Post::with('category')
         ->get();
-
 
         return response()->json($results);
     }
@@ -32,12 +29,10 @@ class PostController extends Controller
         $post->title = $request->input('title');
         $post->content = $request->input('content');
         $post->save();
-        // $post->category_id = $request->input('category_id');
        $post->category()->sync( 
         $request->input('categories')
        );
 
-      
         return response()->json($post,201);
     }
 
@@ -47,11 +42,8 @@ class PostController extends Controller
     public function show(string $id)
     {
         $post = Post::find($id);
+
         return response()->json($post);
-
-       
-
-
     }
 
     /**
@@ -60,25 +52,16 @@ class PostController extends Controller
     public function update(CreatePostRequest $request,  $id)
     {
         $post = Post::findOrFail($id);
-        // if($post){
             $post->title = $request->title;
             $post->content = $request->input('content');
-            // $post->category_id = $request->input('category_id');
             $post->save();
             $post->category()->sync( 
                 $request->input('categories')
                );
 
             return response()->json($post);
-
-        // }
-        // else {
-        //     return response()->json(['message' =>"this post not found"]);
-        // }
-       
     }
 
-    
 
     /**
      * Remove the specified resource from storage.

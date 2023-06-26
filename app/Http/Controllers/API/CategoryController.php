@@ -17,12 +17,8 @@ class CategoryController extends Controller
     public function index()
 
     {
-        // $categories = Category::all();
-        // return response()->json($categories);
-
         $results = Category::with('posts')
         ->get();
-
 
         return response()->json($results);
     }
@@ -35,6 +31,7 @@ class CategoryController extends Controller
         $category = new Category();
         $category->name = $request->input('name');
         $category->save();
+        
         return response()->json($category);
     }
 
@@ -45,7 +42,6 @@ class CategoryController extends Controller
     {
         $category = Category::with('posts')->findOrFail($id);
 
-        // $posts=$category->posts ;
         return response()->json($category);
     }
 
@@ -57,6 +53,7 @@ class CategoryController extends Controller
         $category = Category::find($id);
         $category->name = $request->input('name');
         $category->save();
+
         return response()->json($category);
     }
 

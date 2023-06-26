@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use Spatie\LaravelData\Data;
 use App\Models\Category;
 
-// use Illuminate\Foundation\Http\FormRequest;
 
 class ReturnRequest extends Data
 {
