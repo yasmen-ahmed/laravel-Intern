@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+
+use App\Http\Requests\CreatePostRequest;
 class PostController extends Controller
 {
     /**
@@ -24,13 +26,18 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreatePostRequest $request)
     {
         $post = new Post();
         $post->title = $request->input('title');
         $post->content = $request->input('content');
-        // $post->category_id = $request->input('category_id');
         $post->save();
+        // $post->category_id = $request->input('category_id');
+       $post->category()->sync( 
+        $request->input('categories')
+       );
+
+      
         return response()->json($post,201);
     }
 
@@ -50,25 +57,45 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CreatePostRequest $request,  $id)
     {
-        $post = Post::find($id);
-        $post->title = $request->input('title');
-        $post->content = $request->input('content');
-        $post->category_id = $request->input('category_id');
-        $post->save();
-        return response()->json($post);
+        $post = Post::findOrFail($id);
+        // if($post){
+            $post->title = $request->title;
+            $post->content = $request->input('content');
+            // $post->category_id = $request->input('category_id');
+            $post->save();
+            $post->category()->sync( 
+                $request->input('categories')
+               );
+
+            return response()->json($post);
+
+        // }
+        // else {
+        //     return response()->json(['message' =>"this post not found"]);
+        // }
+       
     }
+
+    
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
+    public function destroy( $id)
+    {   
         $post = Post::find($id);
-        $post->delete();
-        return response()->json(['message' => 'Post deleted successfully']);
-    }
+        if($post){
+            $post->delete();
+            return response()->json(['message' => 'Post deleted successfully']);
+        
+
+        }
+        else {
+            return response()->json(['message' =>"this post not found"]);
+        }
+     }
 
     public function search(Request $request){
         $query = $request->input('q');
