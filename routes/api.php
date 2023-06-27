@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +19,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//register
+// Route::post('create', [App\Http\Controllers\API\AuthController::class, 'create']);
+//login
+Route::post('login', [App\Http\Controllers\API\AuthController::class, 'login']);
 
 Route::get('/posts/search', [App\Http\Controllers\API\PostController::class, 'search']);
+
 Route::apiResource('posts','App\Http\Controllers\API\PostController');
-Route::apiResource('categories','App\Http\Controllers\API\CategoryController');
+
+Route::post('create',[App\Http\Controllers\API\AuthController::class,'create'])->middleware('admin-access');
+
+Route::apiResource('user','App\Http\Controllers\API\UserController')->middleware('admin-access');
